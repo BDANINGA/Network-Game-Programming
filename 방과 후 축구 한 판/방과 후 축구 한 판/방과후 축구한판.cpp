@@ -1,0 +1,165 @@
+#define _CRT_SECURE_NO_WARNINGS
+//--- 메인 함수
+#pragma comment(lib,"glew32.lib") 
+#pragma comment(lib,"freeglut.lib") 
+#include "방과후 축구한판.h"
+
+//------------------------------------------------------------------------------------------------------
+Player player;
+Ball ball;
+Keeper keeper(0.0f, 0.0f, -32.0f);
+
+Camera camera;
+Light light;
+//------------------------------------------------------------------------
+bool start = true;
+bool left_button = 0;
+// 렌더링
+GLvoid drawScene() {
+	
+	if (start) {
+		start = false;
+		loadObj();
+		InitBuffer();
+	}
+
+	//--- 변경된 배경색 설정
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(shaderProgramID);
+	glEnable(GL_DEPTH_TEST);   // 깊이 테스트 활성화
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	ball.Draw(keeper.getPosition(), keeper.ishasBall(), vao_ball);
+	player.Draw(ball, keeper.ishasBall(), vao_player);
+	keeper.Draw(ball.getPosition(), player.ishasBall(), vao_player);
+
+	drawGoal(vao_goalpost);
+	drawBackground();
+
+	// 카메라 설정: 플레이어를 따라가는 카메라
+	camera.setPosition(player.getPosition() + glm::vec3(0.0f, 1.0f, 5.0f));  // 플레이어 위치 기준으로 카메라 위치 설정 (위 2, 뒤 5)
+	camera.setDirection(player.getPosition());  // 카메라는 플레이어를 향하도록 설정
+
+	viewTransform();
+	projectionTransform();
+	make_Light();
+
+	glutSwapBuffers(); // 화면에 출력하기
+}
+GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
+{
+	glViewport(0, 0, w, h);
+}
+
+
+// 조작
+void Keyboard(unsigned char key, int x, int y) {
+	switch (key) {
+
+	case 'd':
+	case 'D':
+		// d 키를 대소문자로 처리, 대소문자 구분
+		player.changeShooting(player.isShooting());
+		break;
+
+	case 'r':
+	case 'R':
+		ball.setPosition(player.getPosition().x, player.getPosition().y, player.getPosition().z);
+		ball.setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+		break;
+	case 'e':
+	case 'E':
+		player.Sprint();
+		break;
+	case 'z':
+	case 'Z':
+		player.changeCurve(player.isCurve());
+		break;
+	case 'c':
+	case 'C':
+		player.changeStrong(player.isStrong());
+		break;
+	case 'q':
+		glutLeaveMainLoop();
+		break;
+	}
+	glutPostRedisplay();
+}
+void KeyboardUp(unsigned char key, int x, int y) {
+	switch (key) {
+	case 'd':
+	case 'D':
+		// d 키가 떼어지면 공 발사
+		player.Shoot(ball);
+		break;
+	case 'e':
+	case 'E':
+		player.Walk();
+		break;
+	case 'z':
+	case 'Z':
+		player.changeCurve(player.isCurve());
+		break;
+	case 'c':
+	case 'C':
+		player.changeStrong(player.isStrong());
+		break;
+	case 'q':
+		glutLeaveMainLoop();
+		break;
+	}
+	glutPostRedisplay();
+}
+void Mouse(int button, int state, int x, int y)
+{
+	float gl_x, gl_y;
+	windowToOpenGL(x, y, width, height, gl_x, gl_y);
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+
+	}
+}
+void Motion(int x, int y)
+{
+	float gl_x, gl_y;
+	windowToOpenGL(x, y, width, height, gl_x, gl_y);
+	if (left_button == true)
+	{
+	}
+	glutPostRedisplay();
+}
+GLvoid SpecialKeys(int key, int x, int y) {
+	switch (key) {
+	case GLUT_KEY_UP:
+		player.keyDown(GLUT_KEY_UP);
+		break;
+	case GLUT_KEY_DOWN:
+		player.keyDown(GLUT_KEY_DOWN);
+		break;
+	case GLUT_KEY_LEFT:
+		player.keyDown(GLUT_KEY_LEFT);
+		break;
+	case GLUT_KEY_RIGHT:
+		player.keyDown(GLUT_KEY_RIGHT);
+		break;
+	}
+	glutPostRedisplay();  // 화면 갱신
+}
+GLvoid SpecialKeysUp(int key, int x, int y) {
+	switch (key) {
+	case GLUT_KEY_UP:
+		player.keyUp(GLUT_KEY_UP);
+		break;
+	case GLUT_KEY_DOWN:
+		player.keyUp(GLUT_KEY_DOWN);
+		break;
+	case GLUT_KEY_LEFT:
+		player.keyUp(GLUT_KEY_LEFT);
+		break;
+	case GLUT_KEY_RIGHT:
+		player.keyUp(GLUT_KEY_RIGHT);
+		break;
+	}
+	glutPostRedisplay();  // 화면 갱신
+}
