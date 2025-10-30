@@ -1,0 +1,287 @@
+#include "Player.h"
+
+// ---------------------------------------------------------------
+// Player
+Player::Player() = default;
+Player::Player(GLfloat x, GLfloat y, GLfloat z) {
+	this->position = { x, y, z };
+};
+Player::~Player() = default;
+
+glm::vec3 Player::getPosition() { return this->position; };
+glm::vec3 Player::getRotation() { return this->rotation; };
+
+void Player::setPosition(GLfloat x, GLfloat y, GLfloat z) {
+	this->position.x = x;
+	this->position.y = y;
+	this->position.z = z;
+};
+
+void Player::Move(Ball& ball, bool keeper_has_ball) {
+	glm::vec3 distanceVec{};
+	this->distance = glm::distance(glm::vec2(this->position.x, this->position.z), glm::vec2(ball.getPosition().x, ball.getPosition().z));
+
+	if (this->has_ball) {
+		if (this->sprint) {
+			this->acceleration = 0.005f;
+			this->max_speed = 0.1f;
+			ball.setAcceleration(0.01f);
+		}
+		else {
+			this->acceleration = 0.002f;  // 플레이어의 가속도
+			this->max_speed = 0.07f;
+			ball.setAcceleration(0.002f);
+		}
+
+		// 방향키에 따른 플레이어 이동 방향 설정
+		if (this->keystates[GLUT_KEY_UP]) {
+			this->direction.z = -1;  // 뒤쪽으로 이동
+			this->rotation.y = glm::radians(180.0f);
+			ball.setDirection(glm::vec3(ball.getDirection().x, ball.getDirection().y, -1.0f));
+			ball.setRotation(glm::vec3(-1.0f, 0.0f, 0.0f));
+		}
+		else if (this->keystates[GLUT_KEY_DOWN]) {
+			this->direction.z = 1;  // 앞쪽으로 이동
+			this->rotation.y = glm::radians(0.0f);
+			ball.setDirection(glm::vec3(ball.getDirection().x, ball.getDirection().y, 1.0f));
+			ball.setRotation(glm::vec3(1.0f, 0.0f, 0.0f)); // 반시계방향 회전
+		}
+		else {
+			this->direction.z = 0;
+			ball.setDirection(glm::vec3(ball.getDirection().x, ball.getDirection().y, 0.0f));
+		}
+		if (this->keystates[GLUT_KEY_LEFT]) {
+			this->direction.x = -1;  // 왼쪽으로 이동
+			this->rotation.y = glm::radians(-90.0f);
+			ball.setDirection(glm::vec3(-1.0f, ball.getDirection().y, ball.getDirection().z));
+			ball.setRotation(glm::vec3(0.0f, 0.0f, 1.0f)); // 반시계방향 회전
+		}
+		else if (this->keystates[GLUT_KEY_RIGHT]) {
+			this->direction.x = 1;  // 오른쪽으로 이동
+			this->rotation.y = glm::radians(90.0f);
+			ball.setDirection(glm::vec3(1.0f, ball.getDirection().y, ball.getDirection().z));
+			ball.setRotation(glm::vec3(0.0f, 0.0f, -1.0f));  // 180도 회전
+		}
+		else {
+			this->direction.x = 0;
+			ball.setDirection(glm::vec3(0.0f, ball.getDirection().y, ball.getDirection().z));
+		}
+		if (this->keystates[GLUT_KEY_UP] && this->keystates[GLUT_KEY_LEFT]) {
+			this->rotation.y = glm::radians(225.0f);
+		}
+		else if (this->keystates[GLUT_KEY_UP] && this->keystates[GLUT_KEY_RIGHT]) {
+			this->rotation.y = glm::radians(135.0f);
+		}
+		else if (this->keystates[GLUT_KEY_DOWN] && this->keystates[GLUT_KEY_LEFT]) {
+			this->rotation.y = glm::radians(-45.0f);
+		}
+		else if (this->keystates[GLUT_KEY_DOWN] && this->keystates[GLUT_KEY_RIGHT]) {
+			this->rotation.y = glm::radians(45.0f);
+		}
+
+		// 가속도를 적용하기 전에 이동 방향이 0이 아닌지 확인
+		if (glm::length(this->direction) > 0.0f) {
+			// 이동 방향을 정규화하여 가속도를 적용
+			this->direction = glm::normalize(this->direction);
+
+			// 현재 속도에 가속도를 적용하여 속도 증가
+			this->velocity += this->direction * this->acceleration;  // 가속도 적용
+
+			// 최대 속도를 제한
+			if (glm::length(this->velocity) > this->max_speed) {
+				this->velocity = glm::normalize(this->velocity) * (this->max_speed);  // 최대 속도 제한
+			}
+		}
+		else {
+			// 이동하지 않으면 감속을 적용
+			if (glm::length(this->velocity) > 0.0f) {
+				this->velocity -= glm::normalize(this->velocity) * (this->deceleration);  // 감속
+			}
+
+			// 감속 후 속도가 너무 낮아지면 속도를 0으로 설정
+			if (glm::length(this->velocity) < min_speed) {
+				this->velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+			}
+		}
+	}
+	else if (!this->has_ball && this-> distance <= 5.0f) {
+		// 플레이어와 공 사이의 벡터 차이 계산
+		distanceVec = this->position - ball.getPosition();
+		distanceVec = glm::normalize(distanceVec);
+		// 플레이어가 공으로 점진적으로 다가가도록 이동
+		this->velocity.x -= distanceVec.x * this->acceleration;
+		this->velocity.z -= distanceVec.z * this->acceleration;
+		ball.setAcceleration(0.0f);
+	}
+	else {
+		if (this->keystates[GLUT_KEY_UP]) {
+			this->direction.z = -1;  // 뒤쪽으로 이동
+			this->rotation.y = glm::radians(180.0f);
+		}
+		else if (this->keystates[GLUT_KEY_DOWN]) {
+			this->direction.z = 1;  // 앞쪽으로 이동
+			this->rotation.y = glm::radians(0.0f);
+		}
+		else {
+			this->direction.z = 0;
+		}
+		if (this->keystates[GLUT_KEY_LEFT]) {
+			this->direction.x = -1;  // 왼쪽으로 이동
+			this->rotation.y = glm::radians(-90.0f);
+		}
+		else if (this->keystates[GLUT_KEY_RIGHT]) {
+			this->direction.x = 1;  // 오른쪽으로 이동
+			this->rotation.y = glm::radians(90.0f);
+		}
+		else {
+			this->direction.x = 0;
+		}
+		if (this->keystates[GLUT_KEY_UP] && this->keystates[GLUT_KEY_LEFT]) {
+			this->rotation.y = glm::radians(225.0f);
+		}
+		else if (this->keystates[GLUT_KEY_UP] && this->keystates[GLUT_KEY_RIGHT]) {
+			this->rotation.y = glm::radians(135.0f);
+		}
+		else if (this->keystates[GLUT_KEY_DOWN] && this->keystates[GLUT_KEY_LEFT]) {
+			this->rotation.y = glm::radians(-45.0f);
+		}
+		else if (this->keystates[GLUT_KEY_DOWN] && this->keystates[GLUT_KEY_RIGHT]) {
+			this->rotation.y = glm::radians(45.0f);
+		}
+
+		// 가속도를 적용하기 전에 이동 방향이 0이 아닌지 확인
+		if (glm::length(this->direction) > 0.0f) {
+			// 이동 방향을 정규화하여 가속도를 적용
+			this->direction = glm::normalize(this->direction);
+
+			// 현재 속도에 가속도를 적용하여 속도 증가
+			this->velocity += this->direction * this->acceleration;  // 가속도 적용
+
+			// 최대 속도를 제한
+			if (glm::length(this->velocity) > this->max_speed) {
+				this->velocity = glm::normalize(this->velocity) * (this->max_speed);  // 최대 속도 제한
+			}
+		}
+		else {
+			// 이동하지 않으면 감속을 적용
+			if (glm::length(this->velocity) > 0.0f) {
+				this->velocity -= glm::normalize(this->velocity) * (this->deceleration);  // 감속
+			}
+
+			// 감속 후 속도가 너무 낮아지면 속도를 0으로 설정
+			if (glm::length(this->velocity) < min_speed) {
+				this->velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+			}
+		}
+	}
+
+	// 마찰력 적용
+	if (this->position.y == 0.0f) {
+		this->velocity *= FRICTION;
+	}
+
+	// 속도를 기준으로 플레이어 위치 업데이트
+	this->position += this->velocity;  // 현재 속도를 반영하여 플레이어 위치 이동
+
+	if (this->distance <= maxdistance && !keeper_has_ball) {
+		this->has_ball = true;
+	}
+	else
+		this->has_ball = false;
+};
+void Player::Draw(Ball& ball, bool keeper_has_ball, GLuint vao_player) {
+	glBindVertexArray(vao_player); //--- VAO를 바인드하기
+
+	// move를 하지 않고 서버로부터 recv로 player의 postion과 rotation을 받는다.
+	// this->Move(ball, keeper_has_ball);
+	
+
+	glm::mat4 Trans = glm::mat4(1.0f);
+	// 플레이어 이동을 위한 위치 업데이트
+	Trans = glm::translate(Trans, this->position);
+	// 회전 적용
+	Trans = glm::rotate(Trans, this->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));  // 회전 적용
+
+	unsigned int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(Trans));
+
+	GLuint playerTextures = loadBMP("플레이어 색.bmp");
+	glActiveTexture(GL_TEXTURE0);      // 텍스처 생성
+	glBindTexture(GL_TEXTURE_2D, playerTextures); // 텍스처 ID 사용
+
+	// 셰이더에 텍스처 유닛 0을 연결
+	GLuint texLocation = glGetUniformLocation(shaderProgramID, "Texture");
+	glUniform1i(texLocation, 0);  // 유닛 0을 grassTexture에 연결
+
+	// 플레이어 그리기
+	glDrawArrays(GL_TRIANGLES, 0, PlayerVertexCount);
+
+	deleteTexture(playerTextures);
+};
+
+void Player::Sprint() {
+	this->sprint = true;
+};
+void Player::Walk() {
+	this->sprint = false;
+};
+bool Player::isSprint() { return this->sprint; };
+
+void Player::Shoot(Ball& ball) {
+	if (this->shootingInprogress && distance <= 1.5f) {
+		if (this->strong)
+			this->shootingpower = 100.f;
+		else
+			this->shootingpower += this->shooting_increase;
+		if (!this->strong && this->shootingpower > this->max_shootingpower) {
+			this->shootingpower = this->max_shootingpower;
+		}
+	}
+
+	if (this->shootingInprogress) {
+		if (ball.getPosition().y == 0.0f) {  // 공이 바닥에 있을 때만 발사
+			ball.setVelocity(glm::normalize(ball.getVelocity()) * this->shootingpower);  // 슈팅 파워 적용
+
+			if (this->curve) {
+				ball.changeCurve();
+				ball.setVelocity(glm::vec3(ball.getVelocity().x + 0.5f, this->shootingpower / 2.0f, ball.getVelocity().z));  // 살짝 위로 튕기게 할 수도 있음
+			}
+			else if (this->strong) {
+				ball.changeStrong();
+			}
+			else	
+				ball.setVelocity(glm::vec3(ball.getVelocity().x, this->shootingpower / 2.0f, ball.getVelocity().z));  // 살짝 위로 튕기게 할 수도 있음
+			
+			
+		}
+		this->shootingpower = 0.0f;  // 슈팅 파워 초기화
+		this->shootingInprogress = false;  // 슈팅 진행 중 상태 초기화
+	}
+	this->has_ball = false;
+}
+
+bool Player::isShooting() { return this->shootingInprogress; };
+void Player::changeShooting(bool shootinginprogress) {
+	this->shootingInprogress = !this->shootingInprogress;
+}
+bool Player::isCurve() { return this->curve; };
+void Player::changeCurve(bool curve) {
+	this->curve = !this->curve;
+}
+bool Player::isStrong() { return this->strong; };
+void Player::changeStrong(bool strong) {
+	this->strong = !this->strong;
+}
+
+bool Player::ishasBall() { return this->has_ball; };
+void Player::changehasBall(bool has_ball) {
+	this->has_ball = !this->has_ball;
+}
+
+void Player::keyDown(int keys) {
+	this->keystates[keys] = true;
+};
+void Player::keyUp(int keys) {
+	this->keystates[keys] = false;
+};
+bool Player::isKey(int keys) { return this->keystates[keys]; };

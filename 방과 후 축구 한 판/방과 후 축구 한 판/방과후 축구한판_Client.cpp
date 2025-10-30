@@ -2,7 +2,7 @@
 //--- 메인 함수
 #pragma comment(lib,"glew32.lib") 
 #pragma comment(lib,"freeglut.lib") 
-#include "방과후 축구한판.h"
+#include "방과후 축구한판_Client.h"
 
 //------------------------------------------------------------------------------------------------------
 Player player;
@@ -31,9 +31,13 @@ GLvoid drawScene() {
 	glEnable(GL_DEPTH_TEST);   // 깊이 테스트 활성화
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	ball.Draw(keeper.getPosition(), keeper.ishasBall(), vao_ball);
-	player.Draw(ball, keeper.ishasBall(), vao_player);
-	keeper.Draw(ball.getPosition(), player.ishasBall(), vao_player);
+	// server로부터 데이터를 받아서 사용하려면 인자를 바꿔야 함.
+	// ball.Draw(ballPos, ,ballR, ballR_Angle);
+	// player.Draw(playerPos, playerR);
+	// keeper.Draw(keeperPos);
+	ball.Draw(keeper.getPosition(), keeper.ishasBall(), vao_ball);						// server로부터 position, rotationAngle, rotation을 받으면 된다.
+	player.Draw(ball, keeper.ishasBall(), vao_player);									// server로부터 position, rotation을 받으면 된다.
+	keeper.Draw(ball.getPosition(), player.ishasBall(), vao_player);					// server로부터 position을 받으면 된다.
 
 	drawGoal(vao_goalpost);
 	drawBackground();
