@@ -161,7 +161,6 @@ void Ball::Move(glm::vec3 keeperPos, bool keeper_has_ball) {
 
 };
 void::Ball::Draw(glm::vec3 keeperPos, bool keeper_has_ball, GLuint vao_ball) {
-	this->Move(keeperPos, keeper_has_ball);
 	glBindVertexArray(vao_ball); //--- VAO를 바인드하기
 
 	glm::mat4 T = glm::mat4(1.0f);
@@ -169,6 +168,9 @@ void::Ball::Draw(glm::vec3 keeperPos, bool keeper_has_ball, GLuint vao_ball) {
 	glm::mat4 R = glm::mat4(1.0f);  // 회전 행렬
 	glm::mat4 Trans = glm::mat4(1.0f);
 
+	// move를 하지않고 서버로부터 recv로 postion, rotationAngle, rotation을 받는다.
+	// this->Move(keeperPos, keeper_has_ball);
+	
 	// 회전 적용 (회전 각도 누적 적용)
 	R = glm::rotate(R, this->rotationAngle, this->rotation);  // 방향에 따라 회전
 

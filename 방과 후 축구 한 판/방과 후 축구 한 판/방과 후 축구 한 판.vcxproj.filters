@@ -27,7 +27,7 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="방과후 축구한판.cpp">
+    <ClCompile Include="방과후 축구한판_Client.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
@@ -56,7 +56,7 @@
     <ClInclude Include="function.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="방과후 축구한판.h">
+    <ClInclude Include="방과후 축구한판_Client.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">

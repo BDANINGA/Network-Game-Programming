@@ -35,14 +35,14 @@ void Keeper::Move(glm::vec3 ballPos, bool has_ball) {
 		this->position.y = glm::mix(this->position.y, this->targetY, this->velocity);
 };
 void Keeper::Draw(glm::vec3 ballPos, bool has_ball, GLuint vao_player) {
-	this->Move(ballPos, has_ball);
 	glBindVertexArray(vao_player); //--- VAO를 바인드하기
+
+	// move를 하지않고 Server로부터 recv로 position을 받는다.
+	// this->Move(ballPos, has_ball);
 
 	glm::mat4 Trans = glm::mat4(1.0f);
 	// 플레이어 이동을 위한 위치 업데이트
 	Trans = glm::translate(Trans, this->position);
-	// 회전 적용
-	//Trans = glm::rotate(Trans, playerRotation, glm::vec3(0.0f, 1.0f, 0.0f));  // 회전 적용
 
 	unsigned int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(Trans));

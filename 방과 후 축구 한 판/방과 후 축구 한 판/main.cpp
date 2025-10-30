@@ -1,5 +1,5 @@
 //--- 메인 함수
-#include "방과후 축구한판.h"
+#include "방과후 축구한판_Client.h"
 
 //--- 필요한 변수 선언
 GLint width, height;

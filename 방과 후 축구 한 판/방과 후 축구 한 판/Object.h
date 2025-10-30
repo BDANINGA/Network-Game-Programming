@@ -10,6 +10,7 @@ class Object
 protected:
 	glm::vec3 position{};
 	glm::vec3 rotation{};
+	float rotationAngle{};
 
 public:
 	Object();

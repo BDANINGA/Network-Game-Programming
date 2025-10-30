@@ -192,7 +192,10 @@ void Player::Move(Ball& ball, bool keeper_has_ball) {
 void Player::Draw(Ball& ball, bool keeper_has_ball, GLuint vao_player) {
 	glBindVertexArray(vao_player); //--- VAO를 바인드하기
 
-	this->Move(ball, keeper_has_ball);
+	// move를 하지 않고 서버로부터 recv로 player의 postion과 rotation을 받는다.
+	// this->Move(ball, keeper_has_ball);
+	
+
 	glm::mat4 Trans = glm::mat4(1.0f);
 	// 플레이어 이동을 위한 위치 업데이트
 	Trans = glm::translate(Trans, this->position);
