@@ -57,12 +57,12 @@ struct PacketGameover {
 // Client -> Server
 struct PacketInputkey {
 	PacketHeader header;
-	uint32_t key;
+	uint8_t key[256];
 };
 
 struct PacketInputspeicialkey {
 	PacketHeader header;
-	uint32_t specialkey;
+	uint8_t specialkey[256];
 };
 
 struct PacketLogin {
