@@ -11,6 +11,9 @@ Keeper keeper(0.0f, 0.0f, -32.0f);
 
 Camera camera;
 Light light;
+
+PacketInputkey input{};
+PacketInputspecialkey specialinput{};
 //------------------------------------------------------------------------
 bool start = true;
 bool left_button = 0;
@@ -64,28 +67,33 @@ void Keyboard(unsigned char key, int x, int y) {
 
 	case 'd':
 	case 'D':
-		// d 키를 대소문자로 처리, 대소문자 구분
+		// PlayerInput('d', &input, sock);
 		player.changeShooting(player.isShooting());
 		break;
 
 	case 'r':
 	case 'R':
+		// debug:ball_reset
 		ball.setPosition(player.getPosition().x, player.getPosition().y, player.getPosition().z);
 		ball.setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
 		break;
 	case 'e':
 	case 'E':
+		// PlayerInput('e', &input, sock);
 		player.Sprint();
 		break;
 	case 'z':
 	case 'Z':
+		// PlayerInput('z', &input, sock);
 		player.changeCurve(player.isCurve());
 		break;
 	case 'c':
 	case 'C':
+		// PlayerInput('c', &input, sock);
 		player.changeStrong(player.isStrong());
 		break;
 	case 'q':
+		// debug: game_quit
 		glutLeaveMainLoop();
 		break;
 	}
@@ -95,23 +103,23 @@ void KeyboardUp(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'd':
 	case 'D':
-		// d 키가 떼어지면 공 발사
+		// PlayerInput('d', &input, sock);
 		player.Shoot(ball);
 		break;
 	case 'e':
 	case 'E':
+		// PlayerInput('e', &input, sock);
 		player.Walk();
 		break;
 	case 'z':
 	case 'Z':
+		// PlayerInput('z', &input, sock);
 		player.changeCurve(player.isCurve());
 		break;
 	case 'c':
 	case 'C':
+		// PlayerInput('c', &input, sock);
 		player.changeStrong(player.isStrong());
-		break;
-	case 'q':
-		glutLeaveMainLoop();
 		break;
 	}
 	glutPostRedisplay();
@@ -136,15 +144,19 @@ void Motion(int x, int y)
 GLvoid SpecialKeys(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
+		// PlayerInput_Special('GLUT_KEY_UP', &specialinput, sock);
 		player.keyDown(GLUT_KEY_UP);
 		break;
 	case GLUT_KEY_DOWN:
+		// PlayerInput_Special('GLUT_KEY_DOWN', &specialinput, sock);
 		player.keyDown(GLUT_KEY_DOWN);
 		break;
 	case GLUT_KEY_LEFT:
+		// PlayerInput_Special('GLUT_KEY_LEFT', &specialinput, sock);
 		player.keyDown(GLUT_KEY_LEFT);
 		break;
 	case GLUT_KEY_RIGHT:
+		// PlayerInput_Special('GLUT_KEY_RIGHT', &specialinput, sock);
 		player.keyDown(GLUT_KEY_RIGHT);
 		break;
 	}
@@ -153,15 +165,19 @@ GLvoid SpecialKeys(int key, int x, int y) {
 GLvoid SpecialKeysUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
+		// PlayerInput_Special('GLUT_KEY_UP', &specialinput, sock);
 		player.keyUp(GLUT_KEY_UP);
 		break;
 	case GLUT_KEY_DOWN:
+		// PlayerInput_Special('GLUT_KEY_DOWN', &specialinput, sock);
 		player.keyUp(GLUT_KEY_DOWN);
 		break;
 	case GLUT_KEY_LEFT:
+		// PlayerInput_Special('GLUT_KEY_LEFT', &specialinput, sock);
 		player.keyUp(GLUT_KEY_LEFT);
 		break;
 	case GLUT_KEY_RIGHT:
+		// PlayerInput_Special('GLUT_KEY_RIGHT', &specialinput, sock);
 		player.keyUp(GLUT_KEY_RIGHT);
 		break;
 	}
