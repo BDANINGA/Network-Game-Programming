@@ -18,3 +18,9 @@
 #include <tuple>
 #include <algorithm>
 #include <iomanip>
+#include "fmod.h"
+#include "fmod.hpp"
+#include "fmod_studio.hpp"
+#include "fmod_errors.h"
+#include <winsock2.h>
+#include <Windows.h>
