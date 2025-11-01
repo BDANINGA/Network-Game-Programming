@@ -472,6 +472,22 @@ void make_Light() {
     glUniform3f(viewPosLocation, light.getViewPos().x, light.getViewPos().y, light.getViewPos().z);
 }
 
+// 조작
+void  PlayerInput(int key_value, PacketInputkey* key, SOCKET sock) {
+    key->key[key_value] = !key->key[key_value];
+    int sent = send(sock, (char*)key, sizeof(PacketInputkey), 0);
+    if (sent != sizeof(PacketInputkey)) {
+        perror("send error");
+    }
+}
+
+void PlayerInput_Special(int key_value, PacketInputspecialkey* specialkey, SOCKET sock) {
+    specialkey->specialkey[key_value] = !specialkey->specialkey[key_value];
+    int sent = send(sock, (char*)specialkey, sizeof(PacketInputspecialkey), 0);
+    if (sent != sizeof(PacketInputkey)) {
+        perror("send error");
+    }
+}
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 도형 만들기(사용안함)

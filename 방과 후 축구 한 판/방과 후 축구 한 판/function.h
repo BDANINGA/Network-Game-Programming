@@ -1,5 +1,6 @@
 #pragma once
 #include "include.h"
+#include "Packet.h"
 
 extern GLuint shaderProgramID; //--- 세이더 프로그램 이름
 extern GLuint vertexShader; //--- 버텍스 세이더 객체
@@ -82,6 +83,10 @@ GLuint loadBMP(const char* filepath);
 void viewTransform();
 void projectionTransform();
 void make_Light();
+
+// 조작
+void PlayerInput(int key_value, PacketInputkey* key, SOCKET sock);
+void PlayerInput_Special(int key_value, PacketInputspecialkey* specialkey, SOCKET sock);
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 도형 만들기(사용안함)
