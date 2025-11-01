@@ -42,7 +42,7 @@ GLvoid drawScene() {
 	drawGoal(vao_goalpost);
 	drawBackground();
 
-	// 카메라 설정: 플레이어를 따라가는 카메라
+	// 카메라 설정: 플레이어를 따라가는 카메라 server로부터 받은 player position으로 받아서 설정
 	camera.setPosition(player.getPosition() + glm::vec3(0.0f, 1.0f, 5.0f));  // 플레이어 위치 기준으로 카메라 위치 설정 (위 2, 뒤 5)
 	camera.setDirection(player.getPosition());  // 카메라는 플레이어를 향하도록 설정
 
