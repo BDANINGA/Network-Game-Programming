@@ -9,3 +9,14 @@ bool checkSegmentCollision(glm::vec3 start, glm::vec3 end, glm::vec3 goalPos, gl
 //timer
 void TimerFunction(int value);
 
+// Gameover - GameSessionLoop()함수 안에서 시간을 체크함.
+void Gameover(time_t time);
+
+// UpdateScore - 11.28일 구현
+void UpdateScore();
+
+// send_gameover - 11.8일 구현
+void send_gameover();
+
+// ReturntoLogin - 개발일정에 미처 적어두지 못했음. Login 관련이기 떄문에 1차토의 후 일정 검토
+void ReturntoLogin();
