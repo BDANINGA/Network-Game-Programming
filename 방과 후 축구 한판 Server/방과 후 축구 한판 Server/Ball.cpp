@@ -159,41 +159,6 @@ void Ball::Move(glm::vec3 keeperPos, bool keeper_has_ball) {
 	this->rotationAngle += glm::length(this->velocity) * rotationSpeed;
 
 };
-void::Ball::Draw(glm::vec3 keeperPos, bool keeper_has_ball, GLuint vao_ball) {
-	glBindVertexArray(vao_ball); //--- VAO를 바인드하기
-
-	glm::mat4 T = glm::mat4(1.0f);
-	glm::mat4 S = glm::mat4(1.0f);
-	glm::mat4 R = glm::mat4(1.0f);  // 회전 행렬
-	glm::mat4 Trans = glm::mat4(1.0f);
-
-	// move를 하지않고 서버로부터 recv로 postion, rotationAngle, rotation을 받는다.
-	// this->Move(keeperPos, keeper_has_ball);
-	
-	// 회전 적용 (회전 각도 누적 적용)
-	R = glm::rotate(R, this->rotationAngle, this->rotation);  // 방향에 따라 회전
-
-	// 두 번째 객체(공) 이동을 위한 위치 업데이트
-	T = glm::translate(T, this->position);  // 두 번째 객체의 위치 적용
-	S = glm::scale(S, glm::vec3(0.015f, 0.015f, 0.015f));  // 크기 조정
-	Trans = T * R * S; // 위치, 회전, 크기 순서로 적용
-
-	unsigned int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(Trans));
-
-	GLuint ballTextures = loadBMP("축구공.bmp");
-	glActiveTexture(GL_TEXTURE0);      // 텍스처 생성
-	glBindTexture(GL_TEXTURE_2D, ballTextures); // 텍스처 ID 사용
-
-	// 셰이더에 텍스처 유닛 0을 연결
-	GLuint texLocation = glGetUniformLocation(shaderProgramID, "Texture");
-	glUniform1i(texLocation, 0);  // 유닛 0을 grassTexture에 연결
-
-	// 두 번째 객체(공) 그리기
-	glDrawArrays(GL_TRIANGLES, 0, BallVertexCount);
-
-	deleteTexture(ballTextures);
-};
 
 void Ball::changeCurve() {
 	this->curve = !this->curve;

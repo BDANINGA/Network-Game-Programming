@@ -189,35 +189,6 @@ void Player::Move(Ball& ball, bool keeper_has_ball) {
 	else
 		this->has_ball = false;
 };
-void Player::Draw(Ball& ball, bool keeper_has_ball, GLuint vao_player) {
-	glBindVertexArray(vao_player); //--- VAO를 바인드하기
-
-	// move를 하지 않고 서버로부터 recv로 player의 postion과 rotation을 받는다.
-	// this->Move(ball, keeper_has_ball);
-	
-
-	glm::mat4 Trans = glm::mat4(1.0f);
-	// 플레이어 이동을 위한 위치 업데이트
-	Trans = glm::translate(Trans, this->position);
-	// 회전 적용
-	Trans = glm::rotate(Trans, this->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));  // 회전 적용
-
-	unsigned int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(Trans));
-
-	GLuint playerTextures = loadBMP("플레이어 색.bmp");
-	glActiveTexture(GL_TEXTURE0);      // 텍스처 생성
-	glBindTexture(GL_TEXTURE_2D, playerTextures); // 텍스처 ID 사용
-
-	// 셰이더에 텍스처 유닛 0을 연결
-	GLuint texLocation = glGetUniformLocation(shaderProgramID, "Texture");
-	glUniform1i(texLocation, 0);  // 유닛 0을 grassTexture에 연결
-
-	// 플레이어 그리기
-	glDrawArrays(GL_TRIANGLES, 0, PlayerVertexCount);
-
-	deleteTexture(playerTextures);
-};
 
 void Player::Sprint() {
 	this->sprint = true;

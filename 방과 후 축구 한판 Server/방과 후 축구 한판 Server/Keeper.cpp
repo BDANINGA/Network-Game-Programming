@@ -34,32 +34,6 @@ void Keeper::Move(glm::vec3 ballPos, bool has_ball) {
 	if (ballPos.z - this->position.z <= 5)
 		this->position.y = glm::mix(this->position.y, this->targetY, this->velocity);
 };
-void Keeper::Draw(glm::vec3 ballPos, bool has_ball, GLuint vao_player) {
-	glBindVertexArray(vao_player); //--- VAO를 바인드하기
-
-	// move를 하지않고 Server로부터 recv로 position을 받는다.
-	// this->Move(ballPos, has_ball);
-
-	glm::mat4 Trans = glm::mat4(1.0f);
-	// 플레이어 이동을 위한 위치 업데이트
-	Trans = glm::translate(Trans, this->position);
-
-	unsigned int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(Trans));
-
-	GLuint keeperTextures = loadBMP("플레이어 색.bmp");
-	glActiveTexture(GL_TEXTURE0);      // 텍스처 생성
-	glBindTexture(GL_TEXTURE_2D, keeperTextures); // 텍스처 ID 사용
-
-	// 셰이더에 텍스처 유닛 0을 연결
-	GLuint texLocation = glGetUniformLocation(shaderProgramID, "Texture");
-	glUniform1i(texLocation, 0);  // 유닛 0을 grassTexture에 연결
-
-	// 플레이어 그리기
-	glDrawArrays(GL_TRIANGLES, 0, PlayerVertexCount);
-
-	deleteTexture(keeperTextures);
-};
 
 void Keeper::hasBall() {
 	this->has_ball = true;
