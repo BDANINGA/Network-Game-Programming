@@ -1,5 +1,4 @@
 #pragma once
-#include "include.h"
 #include "Packet.h"
 
 extern GLuint shaderProgramID; //--- 세이더 프로그램 이름

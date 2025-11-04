@@ -1,5 +1,6 @@
 #pragma once
 #include "include.h"
+#pragma comment(lib, "ws2_32.lib")
 #pragma pack(push, 1)
 #define PKT_LOGIN_RESULT 100
 #define PKT_USER_DATA 101

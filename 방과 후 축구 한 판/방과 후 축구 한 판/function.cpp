@@ -484,7 +484,7 @@ void  PlayerInput(int key_value, PacketInputkey* key, SOCKET sock) {
 void PlayerInput_Special(int key_value, PacketInputspecialkey* specialkey, SOCKET sock) {
     specialkey->specialkey[key_value] = !specialkey->specialkey[key_value];
     int sent = send(sock, (char*)specialkey, sizeof(PacketInputspecialkey), 0);
-    if (sent != sizeof(PacketInputkey)) {
+    if (sent != sizeof(PacketInputspecialkey)) {
         perror("send error");
     }
 }

@@ -12,8 +12,8 @@ Keeper keeper(0.0f, 0.0f, -32.0f);
 Camera camera;
 Light light;
 
-PacketInputkey input{};
-PacketInputspecialkey specialinput{};
+// PacketInputkey input{};
+// PacketInputspecialkey specialinput{};
 //------------------------------------------------------------------------
 bool start = true;
 bool left_button = 0;
