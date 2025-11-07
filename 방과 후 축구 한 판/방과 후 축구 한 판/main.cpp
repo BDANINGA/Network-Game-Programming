@@ -1,6 +1,123 @@
 //--- 메인 함수
 #include "방과후 축구한판_Client.h"
 
+// --- 네트워크 통신용 전역 변수 ---
+SOCKET g_ServerSocket;
+
+// --- recv 용도 ---
+uint8_t g_currentKey[256] = { 0 };
+uint8_t g_currentSpecialKey[256] = { 0 };
+
+// --- send 용도 ---
+PacketRenderData g_LatestRenderData;
+PacketLoginResult g_LatestLoginResult;
+PacketGameover    g_LatestGameover;
+
+
+// --- 수신된 패킷을 처리하는 함수 ---
+void ProcessPacket(const PacketHeader& header, const char* payload)
+{
+    uint16_t type = ntohs(header.type);
+
+    switch (type)
+    {
+    case PKT_RENDER_DATA:
+    {
+        memcpy(&g_LatestRenderData, &header, sizeof(PacketHeader));
+        memcpy(((char*)&g_LatestRenderData) + sizeof(PacketHeader),
+            payload, sizeof(PacketRenderData) - sizeof(PacketHeader));
+        break;
+    }
+    case PKT_LOGIN_RESULT:
+    {
+        memcpy(&g_LatestLoginResult, &header, sizeof(PacketHeader));
+        memcpy(((char*)&g_LatestLoginResult) + sizeof(PacketHeader),
+            payload, sizeof(PacketLoginResult) - sizeof(PacketHeader));
+        break;
+    }
+    case PKT_GAMEOVER:
+    {
+        memcpy(&g_LatestGameover, &header, sizeof(PacketHeader));
+        memcpy(((char*)&g_LatestGameover) + sizeof(PacketHeader),
+            payload, sizeof(PacketGameover) - sizeof(PacketHeader));
+        break;
+    }
+    default:
+        std::cout << "Unknown packet type: " << type << std::endl;
+        break;
+    }
+}
+
+
+// --- 클라이언트 네트워크 스레드 ---
+DWORD WINAPI ClientNetworkThread(LPVOID lpParam)
+{
+    SOCKET sock = (SOCKET)lpParam;
+
+    while (true)
+    {
+        // =====================
+        // (1) 클라이언트 입력 전송
+        // =====================
+        PacketInputkey keyPkt;
+        PacketInputspecialkey specialPkt;
+
+        memcpy(keyPkt.key, g_currentKey, sizeof(g_currentKey));
+        memcpy(specialPkt.specialkey, g_currentSpecialKey, sizeof(g_currentSpecialKey));
+
+        send(sock, (char*)&keyPkt, sizeof(keyPkt), 0);
+        send(sock, (char*)&specialPkt, sizeof(specialPkt), 0);
+
+        // =====================
+        // (2) 패킷 수신
+        // =====================
+        PacketHeader header;
+        int bytesReceived = 0;
+        int totalReceived = 0;
+
+        // --- 헤더(4바이트) 수신 ---
+        while (totalReceived < sizeof(PacketHeader))
+        {
+            bytesReceived = recv(sock, ((char*)&header) + totalReceived,
+                sizeof(PacketHeader) - totalReceived, 0);
+            if (bytesReceived <= 0)
+            {
+                std::cerr << "서버 연결 종료" << std::endl;
+                closesocket(sock);
+                return 0;
+            }
+            totalReceived += bytesReceived;
+        }
+
+        uint16_t packetSize = ntohs(header.size);
+        int payloadSize = packetSize - sizeof(PacketHeader);
+
+        // --- 페이로드 수신 ---
+        char payloadBuffer[2048];
+        totalReceived = 0;
+        while (totalReceived < payloadSize)
+        {
+            bytesReceived = recv(sock, payloadBuffer + totalReceived,
+                payloadSize - totalReceived, 0);
+            if (bytesReceived <= 0)
+            {
+                std::cerr << "서버 연결 종료" << std::endl;
+                closesocket(sock);
+                return 0;
+            }
+            totalReceived += bytesReceived;
+        }
+
+        // =====================
+        // (3) 패킷 처리
+        // =====================
+        ProcessPacket(header, payloadBuffer);
+    }
+
+    closesocket(sock);
+    return 0;
+}
+
 //--- 필요한 변수 선언
 GLint width, height;
 GLuint shaderProgramID; //--- 세이더 프로그램 이름
