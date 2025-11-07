@@ -17,7 +17,7 @@ struct ClientContext {
     int playerID;
 };
 
-// --- TCP 수신 헬퍼 함수 ---
+// --- TCP 수신 함수 ---
 bool RecvTCP(SOCKET sock, char* buffer, int size) {
     int bytesRead = 0;
     while (bytesRead < size) {
@@ -82,6 +82,12 @@ DWORD WINAPI ServerReceiveThread(LPVOID lpParam) {
 
         // 3명의 플레이어가 들어왔는지 확인
         case PKT_GAME_READY: { 
+            break;
+        }
+
+        default: {
+            // 패킷 헤더 식별 실패
+            std::cout << "Unknown packet type: " << ntohs(header.type) << std::endl;
             break;
         }
 
