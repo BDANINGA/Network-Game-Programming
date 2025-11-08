@@ -473,7 +473,7 @@ void make_Light() {
 }
 
 // Á¶ÀÛ
-void  PlayerInput(int key_value, PacketInputkey* key, SOCKET sock) {
+void PlayerInput(int key_value, PacketInputkey* key, SOCKET sock) {
     key->key[key_value] = !key->key[key_value];
     int sent = send(sock, (char*)key, sizeof(PacketInputkey), 0);
     if (sent != sizeof(PacketInputkey)) {
@@ -487,6 +487,13 @@ void PlayerInput_Special(int key_value, PacketInputspecialkey* specialkey, SOCKE
     if (sent != sizeof(PacketInputspecialkey)) {
         perror("send error");
     }
+}
+
+// recv_gameover() - 11.08
+void recv_gameover(SOCKET socket, PacketHeader header, bool* gameover) {
+    int received = recv(socket, (char*)gameover, header.size, MSG_WAITALL);
+    if (received == SOCKET_ERROR)
+        perror("recv_gameover");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
