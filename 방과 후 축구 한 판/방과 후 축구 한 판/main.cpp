@@ -4,18 +4,15 @@
 // --- 네트워크 통신용 전역 변수 ---
 SOCKET g_ServerSocket;
 
-// --- recv 용도 ---
+// --- send 용도 ---
 uint8_t g_currentKey[256] = { 0 };
 uint8_t g_currentSpecialKey[256] = { 0 };
 
-// --- send 용도 ---
-PacketRenderData g_LatestRenderData;
-PacketLoginResult g_LatestLoginResult;
-PacketGameover    g_LatestGameover;
-
+// --- recv 용도 ---
+bool gameover{};
 
 // --- 수신된 패킷을 처리하는 함수 ---
-void ProcessPacket(const PacketHeader& header, const char* payload)
+void ProcessPacket(SOCKET socket, const PacketHeader& header, char* payload)
 {
     uint16_t type = ntohs(header.type);
 
@@ -35,11 +32,9 @@ void ProcessPacket(const PacketHeader& header, const char* payload)
             payload, sizeof(PacketLoginResult) - sizeof(PacketHeader));
         break;
     }
-    case PKT_GAMEOVER:
+    case PKT_GAMEOVER:                                  // 이런 식으로 처리?
     {
-        memcpy(&g_LatestGameover, &header, sizeof(PacketHeader));
-        memcpy(((char*)&g_LatestGameover) + sizeof(PacketHeader),
-            payload, sizeof(PacketGameover) - sizeof(PacketHeader));
+        recv_gameover(socket, header, &gameover);
         break;
     }
     default:
@@ -111,7 +106,7 @@ DWORD WINAPI ClientNetworkThread(LPVOID lpParam)
         // =====================
         // (3) 패킷 처리
         // =====================
-        ProcessPacket(header, payloadBuffer);
+        ProcessPacket(sock, header, payloadBuffer);
     }
 
     closesocket(sock);
