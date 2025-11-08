@@ -18,7 +18,7 @@ struct PacketHeader {
 
 // Server -> Client
 struct PacketLoginResult {
-	PacketHeader header{ htons(PKT_LOGIN_RESULT), htons(sizeof(PacketLoginResult)) };
+	PacketHeader header{ htons(PKT_LOGIN_RESULT), htons(sizeof(PacketLoginResult) - sizeof(PacketHeader)) };
 	uint8_t success;
 	char message[64];      // 실패 시 이유 or 성공 메시지
 };
@@ -31,7 +31,7 @@ struct UserData {
 };
 
 struct PacketUserData {
-	PacketHeader header{ htons(PKT_USER_DATA), htons(sizeof(PacketUserData)) };
+	PacketHeader header{ htons(PKT_USER_DATA), htons(sizeof(PacketUserData) - sizeof(PacketHeader)) };
 	UserData data;
 };
 
@@ -53,40 +53,42 @@ struct KeeperData {
 };
 
 struct PacketRenderData {
-	PacketHeader header{ htons(PKT_RENDER_DATA), htons(sizeof(PacketRenderData)) };
+	PacketHeader header{ htons(PKT_RENDER_DATA), htons(sizeof(PacketRenderData) - sizeof(PacketHeader)) };
 	PlayerData p_data;
 	BallData b_data;
 	KeeperData k_data;
 };
 
 struct PacketGameover {
-	PacketHeader header{ htons(PKT_GAMEOVER), htons(sizeof(PacketGameover)) };
+	PacketHeader header{ htons(PKT_GAMEOVER), htons(sizeof(PacketGameover) - sizeof(PacketHeader)) };
 	uint8_t gameover;
 };
 
 // Client -> Server
 struct PacketInputkey {
-	PacketHeader header{ htons(PKT_INPUT_KEY), htons(sizeof(PacketInputkey)) };
+	PacketHeader header{ htons(PKT_INPUT_KEY), htons(sizeof(PacketInputkey) - sizeof(PacketHeader)) };
 	uint8_t key[256];
 };
 
 struct PacketInputspecialkey {
-	PacketHeader header{ htons(PKT_INPUT_SPECIALKEY), htons(sizeof(PacketInputspecialkey)) };
+	PacketHeader header{ htons(PKT_INPUT_SPECIALKEY), htons(sizeof(PacketInputspecialkey) - sizeof(PacketHeader)) };
 	uint8_t specialkey[256];
 };
 
 struct PacketLogin {
-	PacketHeader header{ htons(PKT_LOGIN), htons(sizeof(PacketLogin)) };
+	PacketHeader header{ htons(PKT_LOGIN), htons(sizeof(PacketLogin) - sizeof(PacketHeader)) };
 	char userID[32];
 	char userPW[32];
 };
 
 struct PacketGameReady {
-	PacketHeader header{ htons(PKT_GAME_READY), htons(sizeof(PacketGameReady)) };
+	PacketHeader header{ htons(PKT_GAME_READY), htons(sizeof(PacketGameReady) - sizeof(PacketHeader)) };
 	uint8_t ready;
 };
 
 struct PacketChatMessage {
-	PacketHeader header{ htons(PKT_CHAT_MESSAGE), htons(sizeof(PacketChatMessage)) };
+	PacketHeader header{ htons(PKT_CHAT_MESSAGE), htons(sizeof(PacketChatMessage) - sizeof(PacketHeader)) };
 	char message[256];
 };
+
+#pragma pack(pop)
