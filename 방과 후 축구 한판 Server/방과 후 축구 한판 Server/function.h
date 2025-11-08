@@ -1,5 +1,6 @@
 #pragma once
 #include "include.h"
+#include "Packet.h"
 // ---------------------------------------------------------------------------------------------------------
 // 함수들
 void windowToOpenGL(int window_x, int window_y, int window_width, int window_height, float& gl_x, float& gl_y);
@@ -16,7 +17,7 @@ void Gameover(time_t time);
 void UpdateScore();
 
 // send_gameover - 11.8일 구현
-void send_gameover();
+int send_gameover(SOCKET socket, PacketGameover gameover);
 
 // ReturntoLogin - 개발일정에 미처 적어두지 못했음. Login 관련이기 떄문에 1차토의 후 일정 검토
 void ReturntoLogin();
