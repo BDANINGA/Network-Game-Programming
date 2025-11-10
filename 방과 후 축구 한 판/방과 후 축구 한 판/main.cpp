@@ -11,6 +11,38 @@ uint8_t g_currentSpecialKey[256] = { 0 };
 // --- recv 용도 ---
 bool gameover{};
 
+// --- connect함수 ---
+bool ConnectToServer(const char* ipAddress, uint16_t port)
+{
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        std::cerr << "WSAStartup failed" << std::endl;
+        return false;
+    }
+
+    g_ServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (g_ServerSocket == INVALID_SOCKET)
+    {
+        std::cerr << "Socket creation failed" << std::endl;
+        WSACleanup();
+        return false;
+    }
+
+    sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(port);
+    inet_pton(AF_INET, ipAddress, &serverAddr.sin_addr);
+    if (connect(g_ServerSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
+    {
+        std::cerr << "Connection to server failed" << std::endl;
+        closesocket(g_ServerSocket);
+        WSACleanup();
+        return false;
+    }
+    return true;
+}
+
 // --- 수신된 패킷을 처리하는 함수 ---
 void ProcessPacket(SOCKET socket, const PacketHeader& header, char* payload)
 {
