@@ -31,6 +31,46 @@ bool RecvTCP(SOCKET sock, char* buffer, int size) {
     return true;
 }
 
+// --- listen함수 ---
+bool ListenForClients(ClientContext &context, uint16_t port) {
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        std::cerr << "WSAStartup failed" << std::endl;
+        return false;
+    }
+
+    context.socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (context.socket == INVALID_SOCKET)
+    {
+        std::cerr << "Socket creation failed" << std::endl;
+        WSACleanup();
+        return false;
+    }
+
+    // bind()
+    struct sockaddr_in serveraddr;
+    memset(&serveraddr, 0, sizeof(serveraddr));
+    serveraddr.sin_family = AF_INET;
+    serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serveraddr.sin_port = htons(port);
+    if (bind(context.socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr)) != 0)
+    {
+        std::cerr << "Bind failed" << std::endl;
+        closesocket(context.socket);
+        WSACleanup();
+        return false;
+	}
+
+    // listen()
+    if (listen(context.socket, SOMAXCONN) == SOCKET_ERROR)
+    {
+        std::cerr << "Listen failed" << std::endl;
+        closesocket(context.socket);
+        WSACleanup();
+        return false;
+	}
+}
 
  // --- 서버 측 수신 스레드 ---
 DWORD WINAPI ServerReceiveThread(LPVOID lpParam) {
