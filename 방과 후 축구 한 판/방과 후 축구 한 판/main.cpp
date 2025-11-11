@@ -52,16 +52,16 @@ void ProcessPacket(SOCKET socket, const PacketHeader& header, char* payload)
     {
     case PKT_RENDER_DATA:
     {
-        memcpy(&g_LatestRenderData, &header, sizeof(PacketHeader));
+       /* memcpy(&g_LatestRenderData, &header, sizeof(PacketHeader));
         memcpy(((char*)&g_LatestRenderData) + sizeof(PacketHeader),
-            payload, sizeof(PacketRenderData) - sizeof(PacketHeader));
+            payload, sizeof(PacketRenderData) - sizeof(PacketHeader));*/
         break;
     }
     case PKT_LOGIN_RESULT:
     {
-        memcpy(&g_LatestLoginResult, &header, sizeof(PacketHeader));
+        /*memcpy(&g_LatestLoginResult, &header, sizeof(PacketHeader));
         memcpy(((char*)&g_LatestLoginResult) + sizeof(PacketHeader),
-            payload, sizeof(PacketLoginResult) - sizeof(PacketHeader));
+            payload, sizeof(PacketLoginResult) - sizeof(PacketHeader));*/
         break;
     }
     case PKT_GAMEOVER:                                  // 이런 식으로 처리?
@@ -83,17 +83,17 @@ DWORD WINAPI ClientNetworkThread(LPVOID lpParam)
 
     while (true)
     {
-        // =====================
-        // (1) 클라이언트 입력 전송
-        // =====================
-        PacketInputkey keyPkt;
-        PacketInputspecialkey specialPkt;
+        //// =====================
+        //// (1) 클라이언트 입력 전송
+        //// =====================
+        //PacketInputkey keyPkt;
+        //PacketInputspecialkey specialPkt;
 
-        memcpy(keyPkt.key, g_currentKey, sizeof(g_currentKey));
-        memcpy(specialPkt.specialkey, g_currentSpecialKey, sizeof(g_currentSpecialKey));
+        //memcpy(keyPkt.key, g_currentKey, sizeof(g_currentKey));
+        //memcpy(specialPkt.specialkey, g_currentSpecialKey, sizeof(g_currentSpecialKey));
 
-        send(sock, (char*)&keyPkt, sizeof(keyPkt), 0);
-        send(sock, (char*)&specialPkt, sizeof(specialPkt), 0);
+        //send(sock, (char*)&keyPkt, sizeof(keyPkt), 0);
+        //send(sock, (char*)&specialPkt, sizeof(specialPkt), 0);
 
         // =====================
         // (2) 패킷 수신

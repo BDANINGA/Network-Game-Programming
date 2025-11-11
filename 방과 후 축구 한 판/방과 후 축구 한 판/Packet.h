@@ -13,7 +13,7 @@
 
 struct PacketHeader {
 	uint16_t type;    // 패킷 종류(ex.로그인, 유저데이터, 키입력 등)
-	uint16_t size;    // 전체 패킷 크기
+	uint16_t size;    // 데이터 크기
 };
 
 // Server -> Client
