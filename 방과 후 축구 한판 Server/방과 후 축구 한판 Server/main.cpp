@@ -70,6 +70,24 @@ bool ListenForClients(ClientContext &context, uint16_t port) {
         WSACleanup();
         return false;
 	}
+
+	return true;
+}
+
+// --- accept 함수 ---
+SOCKET AcceptClient(SOCKET listenSocket) {
+    SOCKET clientSocket = accept(listenSocket, NULL, NULL);
+    if (clientSocket == INVALID_SOCKET)
+    {
+        std::cerr << "Accept failed" << std::endl;
+        return INVALID_SOCKET;
+    }
+    return clientSocket;
+}
+
+// -- 쓰레드 생성 --
+HANDLE CreateServerReceiveThread(ClientContext* context) {
+	return CreateThread(NULL, 0, ServerReceiveThread, (LPVOID)context, 0, NULL);
 }
 
  // --- 서버 측 수신 스레드 ---
