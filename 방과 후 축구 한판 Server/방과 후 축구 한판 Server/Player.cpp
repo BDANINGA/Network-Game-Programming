@@ -10,6 +10,7 @@ Player::~Player() = default;
 
 glm::vec3 Player::getPosition() { return this->position; };
 glm::vec3 Player::getRotation() { return this->rotation; };
+float Player::getBallDistance(Ball& ball) { return glm::distance(this->position, ball.getPosition()); };
 
 void Player::setPosition(GLfloat x, GLfloat y, GLfloat z) {
 	this->position.x = x;
@@ -183,6 +184,8 @@ void Player::Move(Ball& ball, bool keeper_has_ball) {
 	// 속도를 기준으로 플레이어 위치 업데이트
 	this->position += this->velocity;  // 현재 속도를 반영하여 플레이어 위치 이동
 
+
+	// Tackle 함수를 넣게 된다면 이것을 빼야함.
 	if (this->distance <= maxdistance && !keeper_has_ball) {
 		this->has_ball = true;
 	}
@@ -197,6 +200,14 @@ void Player::Walk() {
 	this->sprint = false;
 };
 bool Player::isSprint() { return this->sprint; };
+
+void Player::DoTackle() {
+	if (this->keystates[' '] && this->tacklecool >= 1.5f && !this->has_ball) {
+		this->tacklecool = 0.0f;
+		this->tackle = true;		// 나머지는 서버에서 연산시킨다.
+	}
+}
+bool Player::isTackle() { return this->tackle; };
 
 void Player::Shoot(Ball& ball) {
 	if (this->shootingInprogress && distance <= 1.5f) {
@@ -245,7 +256,7 @@ void Player::changeStrong(bool strong) {
 }
 
 bool Player::ishasBall() { return this->has_ball; };
-void Player::changehasBall(bool has_ball) {
+void Player::toggleHasBall(bool has_ball) {
 	this->has_ball = !this->has_ball;
 }
 
@@ -256,3 +267,25 @@ void Player::keyUp(int keys) {
 	this->keystates[keys] = false;
 };
 bool Player::isKey(int keys) { return this->keystates[keys]; };
+
+// 태클의 조건
+// 1. Space 키가 눌렸을 때 (쿨타임 1.5초)
+// 2. 자기가 공을 소유하고 있지 않을때
+// 3. 주변에 공이 있으며, 그 공을 다른 플레이어가 소유하고 있을 때 
+// 공의 위치를 자신에게 맞추며,
+// 그 공의 소유권을 자기 것으로 만든다.
+
+// TackleEvent - 태클로 공 소유권 이전 여부를 서버에서 관리해야한다.
+void TackleEvent(Player* player, int count, Ball& ball) {
+	for (int i = 0; i < count; ++i) {
+		if (player[i].isTackle()) {
+			for (int j = 0; j < count; ++j) {
+				if (player[j].ishasBall()) 
+					if (player[i].getBallDistance(ball) < player[j].getBallDistance(ball)) {
+						player[j].toggleHasBall(player[j].ishasBall());
+						player[i].toggleHasBall(player[i].ishasBall());
+				}
+			}
+		}	
+	}
+}

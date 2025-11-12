@@ -11,15 +11,18 @@ public:
 
 	glm::vec3 getPosition();
 	glm::vec3 getRotation();
+	float getBallDistance(Ball& ball);
 
 	void setPosition(GLfloat x, GLfloat y, GLfloat z);
 
 	void Move(Ball& ball, bool keeper_has_ball);
-	void Draw(Ball& ball, bool keeper_has_ball, GLuint vao_player);
 
 	void Sprint();
 	void Walk();
 	bool isSprint();
+
+	void DoTackle();
+	bool isTackle();
 
 	void Shoot(Ball& ball);
 
@@ -31,7 +34,7 @@ public:
 	void changeStrong(bool strong);
 
 	bool ishasBall();
-	void changehasBall(bool has_ball);
+	void toggleHasBall(bool has_ball);
 
 	void keyDown(int keys);
 	void keyUp(int keys);
@@ -52,11 +55,14 @@ private:
 	const float max_shootingpower = 50.0f;  // 최대 슈팅 파워
 	const float shooting_increase = 1.0f;  // 슈팅 파워 증가량
 
+	time_t tacklecool{};	// Tackle의 쿨타임 Session Loop에서 연산.
+
 	bool sprint{};
 	bool has_ball= true;	// 첫 렌더링을 위해 true로 바꿈
 	bool keystates[256]{};	// 키보드 상태
 	bool shootingInprogress{};  // 슈팅 진행 중 여부 (d 키가 눌린 상태인지)
 	bool curve = false;			// 감아차기
 	bool strong = false;		// 파워슛
+	bool tackle = false;		// 태클
 
 };
