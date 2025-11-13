@@ -87,9 +87,6 @@ void make_Light();
 void PlayerInput(int key_value, PacketInputkey* key, SOCKET sock);
 void PlayerInput_Special(int key_value, PacketInputspecialkey* specialkey, SOCKET sock);
 
-// recv_gameover() - 11.08
-void recv_gameover(SOCKET socket, PacketHeader header, bool* gameover);
-
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 도형 만들기(사용안함)
 void MakeSphere(GLfloat arr[][3], GLfloat normal[][3], GLfloat cx, GLfloat cy, GLfloat cz, GLfloat radius, int first_index);

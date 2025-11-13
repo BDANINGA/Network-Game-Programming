@@ -1,6 +1,6 @@
 #pragma once
 #include "include.h"
-#include "Packet.h"
+#include "network.h"
 #include "Player.h"
 // ---------------------------------------------------------------------------------------------------------
 // 함수들
@@ -16,9 +16,6 @@ void Gameover(time_t time, SOCKET socket);
 
 // UpdateScore - 11.28일 구현
 void UpdateScore();
-
-// send_gameover - 11.8일 구현
-void send_gameover(SOCKET socket);
 
 // ReturntoLogin - 개발일정에 미처 적어두지 못했음. Login 관련이기 떄문에 1차토의 후 일정 검토
 void ReturntoLogin();

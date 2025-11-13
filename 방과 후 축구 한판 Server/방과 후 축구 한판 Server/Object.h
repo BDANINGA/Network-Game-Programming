@@ -17,6 +17,3 @@ public:
 	glm::vec3 getPosition();
 	float getDistance(const Object &other);
 };
-
-void drawGoal(GLuint vao_goalpost);
-void drawBackground();

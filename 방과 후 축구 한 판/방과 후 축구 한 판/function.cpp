@@ -489,12 +489,6 @@ void PlayerInput_Special(int key_value, PacketInputspecialkey* specialkey, SOCKE
     }
 }
 
-// recv_gameover() - 11.08
-void recv_gameover(SOCKET socket, PacketHeader header, bool* gameover) {
-    int received = recv(socket, (char*)gameover, header.size, MSG_WAITALL);
-    if (received == SOCKET_ERROR)
-        perror("recv_gameover");
-}
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 도형 만들기(사용안함)
