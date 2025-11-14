@@ -12,3 +12,22 @@ void send_gameover(SOCKET socket) {
     if (sent2 == sizeof(gameover.header.size))
         printf("error send_gameover.gameover");
 }
+
+void send_renderdata(SOCKET socket, PacketRenderData& renderdata) {
+    int sent1 = send(socket, (char*)&renderdata.header, sizeof(PacketHeader), 0);
+    if (sent1 == sizeof(PacketHeader))
+        printf("error send_renderdata.header");
+
+    int sent2 = send(socket, (char*)&renderdata.p_data, sizeof(PlayerData), 0);
+    if (sent2 == sizeof(PlayerData))
+        printf("error send_gameover.p_data");
+
+    int sent3 = send(socket, (char*)&renderdata.b_data, sizeof(BallData), 0);
+    if (sent3 == sizeof(BallData))
+        printf("error send_gameover.b_data");
+
+    int sent4 = send(socket, (char*)&renderdata.k_data, sizeof(KeeperData), 0);
+    if (sent4 == sizeof(KeeperData))
+        printf("error send_gameover.k_data");
+
+}
