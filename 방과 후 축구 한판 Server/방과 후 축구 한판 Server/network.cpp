@@ -90,15 +90,20 @@ DWORD WINAPI ServerReceiveThread(LPVOID lpParam) {
 
             // 涝仿蔼 贸府
         case PKT_INPUT_KEY: {
-            /*if (!RecvTCP(sock, (char*)g_LatestInputKey[playerID].key, payloadSize)) {
+            PacketInputkey input_key;
+            if (!RecvTCP(sock, (char*)input_key.key, payloadSize)) {
                 break;
-            }*/
+            }
 
             break;
         }
         case PKT_INPUT_SPECIALKEY: {
-            /*if (!RecvTCP(sock, (char*)g_LatestInputSpecialKey[playerID].specialkey, payloadSize)) break;
-            break;*/
+            PacketInputspecialkey input_special;
+            if (!RecvTCP(sock, (char*)input_special.specialkey, payloadSize)) {
+                break;
+            }
+
+            break;
         }
 
                                  // Login 贸府
