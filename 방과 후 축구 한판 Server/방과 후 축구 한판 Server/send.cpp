@@ -18,16 +18,13 @@ void send_renderdata(SOCKET socket, PacketRenderData& renderdata) {
     if (sent1 == sizeof(PacketHeader))
         printf("error send_renderdata.header");
 
-    int sent2 = send(socket, (char*)&renderdata.p_data, sizeof(PlayerData), 0);
-    if (sent2 == sizeof(PlayerData))
-        printf("error send_gameover.p_data");
+    char* memptr;
+	int memsize = sizeof(PlayerData) + sizeof(BallData) + sizeof(KeeperData);
+	memcpy(memptr, &renderdata.p_data, sizeof(PlayerData));
+	memset(memptr + sizeof(PlayerData), (int) & renderdata.b_data, sizeof(BallData));
+	memset(memptr + sizeof(PlayerData) + sizeof(BallData), (int)&renderdata.k_data, sizeof(KeeperData));
 
-    int sent3 = send(socket, (char*)&renderdata.b_data, sizeof(BallData), 0);
-    if (sent3 == sizeof(BallData))
-        printf("error send_gameover.b_data");
-
-    int sent4 = send(socket, (char*)&renderdata.k_data, sizeof(KeeperData), 0);
-    if (sent4 == sizeof(KeeperData))
-        printf("error send_gameover.k_data");
-
+    int sent2 = send(socket, memptr, memsize, 0);
+    if (sent2 == memsize)
+        printf("error send_renderdata.data");
 }
