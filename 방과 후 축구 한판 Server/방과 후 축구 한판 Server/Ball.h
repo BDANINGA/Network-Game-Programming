@@ -26,7 +26,6 @@ public:
 	void setAcceleration(float acceleration);
 
 	void Move(glm::vec3 keeperPos, bool keeper_has_ball);
-	void Draw(glm::vec3 keeperPos, bool keeper_has_ball, GLuint vao_ball);
 
 	void changeCurve();
 	void changeStrong();

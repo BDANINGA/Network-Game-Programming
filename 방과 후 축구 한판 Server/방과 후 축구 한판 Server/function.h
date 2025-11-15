@@ -1,7 +1,6 @@
 #pragma once
 #include "include.h"
 #include "network.h"
-#include "Player.h"
 // ---------------------------------------------------------------------------------------------------------
 // 함수들
 void windowToOpenGL(int window_x, int window_y, int window_width, int window_height, float& gl_x, float& gl_y);
@@ -19,6 +18,3 @@ void UpdateScore();
 
 // ReturntoLogin - 개발일정에 미처 적어두지 못했음. Login 관련이기 떄문에 1차토의 후 일정 검토
 void ReturntoLogin();
-
-// TackleEvent - 태클로 공 소유권 이전 여부를 서버에서 관리해야한다.
-void TackleEvent(Player* player, int count, Ball& ball);

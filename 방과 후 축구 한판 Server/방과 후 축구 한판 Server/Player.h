@@ -66,3 +66,6 @@ private:
 	bool tackle = false;		// 태클
 
 };
+
+// TackleEvent - 태클로 공 소유권 이전 여부를 서버에서 관리해야한다.
+void TackleEvent(Player* player, int count, Ball& ball);

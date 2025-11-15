@@ -12,8 +12,10 @@ Keeper keeper(0.0f, 0.0f, -32.0f);
 Camera camera;
 Light light;
 
-// PacketInputkey input{};
-// PacketInputspecialkey specialinput{};
+PacketInputkey input{};
+PacketInputspecialkey specialinput{};
+
+extern SOCKET g_ServerSocket;
 //------------------------------------------------------------------------
 bool start = true;
 bool left_button = 0;
@@ -67,7 +69,7 @@ void Keyboard(unsigned char key, int x, int y) {
 
 	case 'd':
 	case 'D':
-		// PlayerInput('d', &input, sock);
+		PlayerInput('d', &input, g_ServerSocket);
 		player.changeShooting(player.isShooting());
 		break;
 
@@ -79,17 +81,17 @@ void Keyboard(unsigned char key, int x, int y) {
 		break;
 	case 'e':
 	case 'E':
-		// PlayerInput('e', &input, sock);
+		PlayerInput('e', &input, g_ServerSocket);
 		player.Sprint();
 		break;
 	case 'z':
 	case 'Z':
-		// PlayerInput('z', &input, sock);
+		PlayerInput('z', &input, g_ServerSocket);
 		player.changeCurve(player.isCurve());
 		break;
 	case 'c':
 	case 'C':
-		// PlayerInput('c', &input, sock);
+		PlayerInput('c', &input, g_ServerSocket);
 		player.changeStrong(player.isStrong());
 		break;
 	case 'q':
@@ -103,22 +105,22 @@ void KeyboardUp(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'd':
 	case 'D':
-		// PlayerInput('d', &input, sock);
+		PlayerInput('d', &input, g_ServerSocket);
 		player.Shoot(ball);
 		break;
 	case 'e':
 	case 'E':
-		// PlayerInput('e', &input, sock);
+		PlayerInput('e', &input, g_ServerSocket);
 		player.Walk();
 		break;
 	case 'z':
 	case 'Z':
-		// PlayerInput('z', &input, sock);
+		PlayerInput('z', &input, g_ServerSocket);
 		player.changeCurve(player.isCurve());
 		break;
 	case 'c':
 	case 'C':
-		// PlayerInput('c', &input, sock);
+		PlayerInput('c', &input, g_ServerSocket);
 		player.changeStrong(player.isStrong());
 		break;
 	}
@@ -165,19 +167,19 @@ GLvoid SpecialKeys(int key, int x, int y) {
 GLvoid SpecialKeysUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
-		// PlayerInput_Special('GLUT_KEY_UP', &specialinput, sock);
+		PlayerInput_Special(GLUT_KEY_UP, &specialinput, g_ServerSocket);
 		player.keyUp(GLUT_KEY_UP);
 		break;
 	case GLUT_KEY_DOWN:
-		// PlayerInput_Special('GLUT_KEY_DOWN', &specialinput, sock);
+		PlayerInput_Special(GLUT_KEY_DOWN, &specialinput, g_ServerSocket);
 		player.keyUp(GLUT_KEY_DOWN);
 		break;
 	case GLUT_KEY_LEFT:
-		// PlayerInput_Special('GLUT_KEY_LEFT', &specialinput, sock);
+		PlayerInput_Special(GLUT_KEY_LEFT, &specialinput, g_ServerSocket);
 		player.keyUp(GLUT_KEY_LEFT);
 		break;
 	case GLUT_KEY_RIGHT:
-		// PlayerInput_Special('GLUT_KEY_RIGHT', &specialinput, sock);
+		PlayerInput_Special(GLUT_KEY_RIGHT, &specialinput, g_ServerSocket);
 		player.keyUp(GLUT_KEY_RIGHT);
 		break;
 	}
