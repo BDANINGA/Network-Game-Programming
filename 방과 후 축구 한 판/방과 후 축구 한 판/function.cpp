@@ -474,11 +474,15 @@ void make_Light() {
 
 // Á¶ÀÛ
 void PlayerInput(int key_value, PacketInputkey* key, SOCKET sock) {
-    key->key[key_value] = !key->key[key_value];
+    if (key->key[key_value])
+        key->key[key_value] = 0;
+    else
+        key->key[key_value] = 1;
     int sent = send(sock, (char*)key, sizeof(PacketInputkey), 0);
-    if (sent != sizeof(PacketInputkey)) {
-        perror("send error");
+    if (!sent) {
+        perror("key_value error");
     }
+    printf("%c", key_value);
 }
 
 void PlayerInput_Special(int key_value, PacketInputspecialkey* specialkey, SOCKET sock) {

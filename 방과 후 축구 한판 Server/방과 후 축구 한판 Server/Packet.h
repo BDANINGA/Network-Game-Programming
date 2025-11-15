@@ -54,7 +54,7 @@ struct KeeperData {
 
 struct PacketRenderData {
 	PacketHeader header{ htons(PKT_RENDER_DATA), htons(sizeof(PacketRenderData) - sizeof(PacketHeader)) };
-	PlayerData p_data;
+	PlayerData p_data[3];
 	BallData b_data;
 	KeeperData k_data;
 };

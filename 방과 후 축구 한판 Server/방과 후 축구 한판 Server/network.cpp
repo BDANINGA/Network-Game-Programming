@@ -85,6 +85,8 @@ DWORD WINAPI ServerReceiveThread(LPVOID lpParam) {
             continue;
         }
 
+        std::cout << header.size << std::endl;
+
         // 패킷 타입에 따라 분기
         switch (header.type) {
 
@@ -94,7 +96,7 @@ DWORD WINAPI ServerReceiveThread(LPVOID lpParam) {
             if (!RecvTCP(sock, (char*)input_key.key, payloadSize)) {
                 break;
             }
-
+            printf("%c", (char)input_key.key);
             break;
         }
         case PKT_INPUT_SPECIALKEY: {
