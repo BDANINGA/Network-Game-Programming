@@ -33,7 +33,7 @@ int main() {
             i--; // 해당 클라이언트 접속 재시도
             continue;
         }
-        std::cout << "Player " << i << " connected" << std::endl;
+        std::cout << "Player " << i + 1 << " connected" << std::endl;
 
         // 수신 스레드용 컨텍스트 생성
         ClientContext* pClientContext = new ClientContext();
